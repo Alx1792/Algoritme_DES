@@ -9,7 +9,7 @@ public class Main {
 
 
         try(BufferedWriter bw=new BufferedWriter(new FileWriter(textEnc))){
-
+        
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
