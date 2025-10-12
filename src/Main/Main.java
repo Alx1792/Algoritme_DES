@@ -323,11 +323,10 @@ public class Main {
         return binari.trim(); //
     }
     public static String omplirText(String text) {
-        String binari = "";
         while(text.length()<64){
             text="0"+text;
         }
-        return binari.trim(); //
+        return text; //
     }
 
 
