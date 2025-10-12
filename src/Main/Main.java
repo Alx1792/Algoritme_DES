@@ -97,6 +97,7 @@ public class Main {
 
         for(int i=0;i<1;i++) {
             String rT=R.get(R.size()-1);//
+            String lT=L.get(L.size()-1);//
             int[] E = {
                     32, 1, 2, 3, 4, 5,
                     4, 5, 6, 7, 8, 9,
@@ -122,15 +123,31 @@ public class Main {
                 System.out.println(String.format("B%s = %s",B.size(),grups));
 
             }
+            String Bs=sBox(B);
+            System.out.println(Bs);
+
+            int[] P = {
+                    16, 7, 20, 21,
+                    29, 12, 28, 17,
+                    1, 15, 23, 26,
+                    5, 18, 31, 10,
+                    2, 8, 24, 14,
+                    32, 27, 3, 9,
+                    19, 13, 30, 6,
+                    22, 11, 4, 25
+            };
+            String f="";
+            for(int num:P){
+                f=f+Bs.charAt(num-1);
+
+            }
+            System.out.println("f ="+ f);
+            String keL=XOR(lT,f);
+            R.add(keL);
+            System.out.println(keL);
 
         }
-        int[][] S1 = {
-                {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
-                {0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
-                {4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
-                {15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13}
 
-        };
 
     }
 
@@ -251,9 +268,8 @@ public class Main {
             int X=binariDecimal(Bn.substring(1,Bn.length()-1));
             int Y=binariDecimal(Bn.substring(0,1)+Bn.substring(Bn.length() - 1, Bn.length()));
             resultat=resultat +decimalBinari(Integer.toString(Sn[Y][X]));
-            
-        }
 
+        }
         return resultat;
     }
     public static String decimalBinari(String dec){
