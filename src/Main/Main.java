@@ -15,17 +15,18 @@ public class Main {
         while(text_incorrecte) {
             System.out.println("Introdueix text a encriptar");
             String text = scan.nextLine();
-            binari1 = textBinari(text);
-            if(binari1.length()<64){
+            binari1 = omplirText(textBinari(text));
+            System.out.println(binari1);
+            if(binari1.length()==64){
                 text_incorrecte=false;
             }
         }
         while(contra_incorrecta) {
             System.out.println("Introdueix text a encriptar");
             String contra= scan.nextLine();
-            binari2 = textBinari(contra);
-            if(binari2.length()<64){
-                text_incorrecte=false;
+            binari2 = omplirText(textBinari(contra));
+            if(binari2.length()==64){
+                contra_incorrecta=false;
             }
         }
         //CLAU
