@@ -1,16 +1,26 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-
+        Scanner scan=new Scanner(System.in);
+        boolean text_incorrecte= true
         //Pas 1
+        while(text_incorrecte) {
+            String text = scan.nextLine();
+            String binari = textBinari(text);
+            if(binari.length()>64){
+
+            }
+        }
+
+
         //CLAU
         String bit = "0000000100100011010001010110011110001001101010111100110111101111"; //a encriptar
-       // String L=bit.substring(0,32);
-        //String R=bit.substring(32,64);
+
 
         String k = "0001001100110100010101110111100110011011101111001101111111110001";//clau
         System.out.println("Clau principal "+k);
@@ -72,7 +82,6 @@ public class Main {
         //Pas 2
         //TEXT
 
-
         String bitIP="";
         int[] IP = {
                 58, 50, 42, 34, 26, 18, 10, 2,
@@ -95,9 +104,11 @@ public class Main {
         L.add(L0);
         R.add(R0);
 
-        for(int i=0;i<1;i++) {
-            String rT=R.get(R.size()-1);//
-            String lT=L.get(L.size()-1);//
+        for(int i=0;i<16;i++) {
+            String rA=R.get(R.size()-1);//
+            String lA =L.get(L.size()-1);//
+            System.out.println(String.format("R%s = %s",i,rA));
+            System.out.println(String.format("L%s = %s",i, lA));
             int[] E = {
                     32, 1, 2, 3, 4, 5,
                     4, 5, 6, 7, 8, 9,
@@ -111,11 +122,11 @@ public class Main {
 
             String eR = "";
             for (int num : E) {
-                eR=eR+rT.charAt(num-1);
+                eR=eR+rA.charAt(num-1);
             }
-            System.out.println("E(R0)= "+eR);
+            System.out.println(String.format("E%s = %s",i,eR));
             String keR=XOR(eR,K.get(i));
-            System.out.println("XOR= "+keR);
+            System.out.println(String.format("K1+E(R%s) = %s",i,keR));
             ArrayList<String> B=new ArrayList<>();
             for (int j = 0; j < keR.length(); j+=6) {
                 String grups=keR.substring(j,j+6);
@@ -142,18 +153,33 @@ public class Main {
 
             }
             System.out.println("f ="+ f);
-            String keL=XOR(lT,f);
+            String keL=XOR(lA,f);
             R.add(keL);
-            System.out.println(keL);
-
+            System.out.println(String.format("R%s = %s",i+1,keL));
+            L.add(rA);
+            System.out.println(String.format("L%s = %s",i+1,rA));
         }
-
-
+        String IPfinal=R.get(R.size()-1)+L.get(L.size()-1);
+        System.out.println("RL16= "+IPfinal);
+        int[] IP1 = {
+                40, 8, 48, 16, 56, 24, 64, 32,
+                39, 7, 47, 15, 55, 23, 63, 31,
+                38, 6, 46, 14, 54, 22, 62, 30,
+                37, 5, 45, 13, 53, 21, 61, 29,
+                36, 4, 44, 12, 52, 20, 60, 28,
+                35, 3, 43, 11, 51, 19, 59, 27,
+                34, 2, 42, 10, 50, 18, 58, 26,
+                33, 1, 41,  9, 49, 17, 57, 25
+        };
+        String textFin=""; //per fi
+        for(int num: IP1){
+            textFin=textFin+IPfinal.charAt(num-1);
+        }
+        System.out.println("Text encriptat: "+textFin);
     }
-
     public static String left_Shift(String chunk,int pos){
         String clau="";
-        Integer []shifts2={3,4,5,7,8,10,11,12,13,14,15};
+        Integer []shifts2={3,4,5,6,7,8,10,11,12,13,14,15};
         ArrayList<Integer> shift=new ArrayList<>(Arrays.asList(shifts2));
         for(int i=0;i<chunk.length();i++){
             if(shift.contains(pos)) {
@@ -280,6 +306,13 @@ public class Main {
             }
         }
         return binari;
+    }
+    public static String textBinari(String text) {
+        String binari = "";
+        for (char c : text.toCharArray()) {
+            binari += String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0');
+        }
+        return binari.trim(); //
     }
 
 
