@@ -7,22 +7,30 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scan=new Scanner(System.in);
-        boolean text_incorrecte= true
-        //Pas 1
-        while(text_incorrecte) {
-            String text = scan.nextLine();
-            String binari = textBinari(text);
-            if(binari.length()>64){
+        boolean text_incorrecte= true;
+        boolean contra_incorrecta= true;
+        String binari1="";
+        String binari2="";
 
+        while(text_incorrecte) {
+            System.out.println("Introdueix text a encriptar");
+            String text = scan.nextLine();
+            binari1 = textBinari(text);
+            if(binari1.length()<64){
+                text_incorrecte=false;
             }
         }
-
-
+        while(contra_incorrecta) {
+            System.out.println("Introdueix text a encriptar");
+            String contra= scan.nextLine();
+            binari2 = textBinari(contra);
+            if(binari2.length()<64){
+                text_incorrecte=false;
+            }
+        }
         //CLAU
-        String bit = "0000000100100011010001010110011110001001101010111100110111101111"; //a encriptar
-
-
-        String k = "0001001100110100010101110111100110011011101111001101111111110001";//clau
+        String bit = omplirText(binari1); //a encriptar
+        String k = binari2;//clau
         System.out.println("Clau principal "+k);
         int[]PC1 = {
                 57, 49, 41, 33, 25, 17, 9,
@@ -311,6 +319,13 @@ public class Main {
         String binari = "";
         for (char c : text.toCharArray()) {
             binari += String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0');
+        }
+        return binari.trim(); //
+    }
+    public static String omplirText(String text) {
+        String binari = "";
+        while(text.length()<64){
+            text="0"+text;
         }
         return binari.trim(); //
     }
