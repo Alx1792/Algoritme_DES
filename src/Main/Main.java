@@ -1,14 +1,11 @@
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void encriptar() {
+
         Scanner scan = new Scanner(System.in);
         boolean text_incorrecte = true;
         boolean contra_incorrecta = true;
@@ -211,7 +208,7 @@ public class Main {
         System.out.println("Resultat final: "+ combinarCHunks(chunksResultants));
 
 
-        String ruta="C:\\Users\\zilax\\Documents\\GitHub\\Algoritme_DES\\src\\resources\\encripta.txt";
+        String ruta="src/resources/encripta.txt";
         try (FileWriter escArxiu= new FileWriter(ruta)){
             escArxiu.write(combinarCHunks(chunksResultants));
             System.out.println("Text xifrat guardat");
@@ -228,19 +225,14 @@ public class Main {
         ArrayList<String> chunksResultants = new ArrayList<>();
 
         // Leer el archivo encriptado
-        String ruta = "C:\\Users\\zilax\\Documents\\GitHub\\Algoritme_DES\\src\\resources\\encripta.txt";
+        String ruta = "src/resources/encripta.txt";
         String textEncriptat = "";
 
-        try {
-            File arxiu = new File(ruta);
-            Scanner lector = new Scanner(arxiu);
-            while (lector.hasNextLine()) {
-                textEncriptat += lector.nextLine();
-            }
-            lector.close();
-            System.out.println("Text xifrat llegit correctament");
-        } catch (Exception e) {
-            System.out.println("Error llegint l'arxiu");
+        try (BufferedReader br = new BufferedReader(new FileReader(ruta))){
+            textEncriptat = br.readLine();
+
+        } catch (IOException e ) {
+            System.out.println("Ni hi ha res encriptat, afegeix un text i encripta'l");
             return;
         }
 
@@ -447,7 +439,7 @@ public class Main {
         System.out.println("Text desencriptat: " + textDesencriptat);
 
         // Guardar el texto desencriptado
-        String rutaDesenc = "C:\\Users\\zilax\\Documents\\GitHub\\Algoritme_DES\\src\\resources\\desencripta.txt";
+        String rutaDesenc = "src/resources/desencripta.txt";
         try (FileWriter escArxiu = new FileWriter(rutaDesenc)) {
             escArxiu.write(textDesencriptat);
             System.out.println("Text desxifrat guardat");
@@ -456,22 +448,13 @@ public class Main {
         }
     }
 
-    // Función auxiliar para convertir binario a texto
+
     public static String binariText(String binari) {
         String text = "";
-        // Eliminar ceros iniciales del padding
-        binari = binari.replaceFirst("^0+(?!$)", "");
-
-        // Asegurar que la longitud sea múltiplo de 8
-        while (binari.length() % 8 != 0) {
-            binari = "0" + binari;
-        }
-
-        for (int i = 0; i < binari.length(); i += 8) {
-            String byteBinari = binari.substring(i, i + 8);
-            int valorAscii = Integer.parseInt(byteBinari, 2);
-            if (valorAscii != 0) { // Ignorar bytes nulos del padding
-                text += (char) valorAscii;
+        for(int i=0; i< binari.length();i+=8){
+            int charCode = Integer.parseInt(binari.substring(i,i+8),2);
+            if(charCode !=0){
+                text += (char) charCode;
             }
         }
         return text;
