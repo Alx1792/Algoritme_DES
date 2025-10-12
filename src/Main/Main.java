@@ -164,7 +164,7 @@ public class Main {
 
                 }
                 String Bs = sBox(B);
-                System.out.println(Bs);
+                ;
 
                 int[] P = {
                         16, 7, 20, 21,
@@ -220,8 +220,262 @@ public class Main {
         }
 
     }
+    public static void desencriptar() {
+        Scanner scan = new Scanner(System.in);
+        boolean contra_incorrecta = true;
+        String binari2 = "";
+        ArrayList<String> chunksText = new ArrayList<>();
+        ArrayList<String> chunksResultants = new ArrayList<>();
 
+        // Leer el archivo encriptado
+        String ruta = "C:\\Users\\zilax\\Documents\\GitHub\\Algoritme_DES\\src\\resources\\encripta.txt";
+        String textEncriptat = "";
 
+        try {
+            File arxiu = new File(ruta);
+            Scanner lector = new Scanner(arxiu);
+            while (lector.hasNextLine()) {
+                textEncriptat += lector.nextLine();
+            }
+            lector.close();
+            System.out.println("Text xifrat llegit correctament");
+        } catch (Exception e) {
+            System.out.println("Error llegint l'arxiu");
+            return;
+        }
+
+        System.out.println("Text encriptat: " + textEncriptat);
+
+        // Dividir en chunks de 64 bits
+        int nChunksText = (int) (Math.ceil((double) textEncriptat.length() / 64));
+        int ultimaP = 0;
+        for (int i = 0; i < nChunksText; i++) {
+            if (i == nChunksText - 1) {
+                System.out.println(String.format("Chunck n%s = %s", i + 1, textEncriptat.substring(ultimaP, textEncriptat.length())));
+                chunksText.add(textEncriptat.substring(ultimaP, textEncriptat.length()));
+            } else {
+                System.out.println(String.format("Chunck n%s = %s", i + 1, textEncriptat.substring(ultimaP, ultimaP + 64)));
+                chunksText.add(textEncriptat.substring(ultimaP, ultimaP + 64));
+                ultimaP = ultimaP + 64;
+            }
+        }
+
+        System.out.println("Introdueix contrasenya per desencriptar");
+        while (contra_incorrecta) {
+            String contra = scan.nextLine();
+            binari2 = omplirText(textBinari(contra));
+
+            if (binari2.length() <= 64) {
+                contra_incorrecta = false;
+            } else {
+                System.out.println("Contraseña invalida");
+            }
+        }
+
+        //CLAU - Generar las mismas subclaves
+        for (String chunk : chunksText) {
+            String bit = chunk; //a desencriptar
+            String k = binari2;//clau
+            System.out.println("Clau principal " + k);
+            int[] PC1 = {
+                    57, 49, 41, 33, 25, 17, 9,
+                    1, 58, 50, 42, 34, 26, 18,
+                    10, 2, 59, 51, 43, 35, 27,
+                    19, 11, 3, 60, 52, 44, 36,
+                    63, 55, 47, 39, 31, 23, 15,
+                    7, 62, 54, 46, 38, 30, 22,
+                    14, 6, 61, 53, 45, 37, 29,
+                    21, 13, 5, 28, 20, 12, 4
+            };
+
+            String kplus = "";
+
+            for (int num : PC1) {
+                kplus = kplus + k.charAt(num - 1);
+            }
+            System.out.println("Clau permutada: " + kplus);
+            String c0 = kplus.substring(0, 28);
+            System.out.println("C0 =" + c0);
+            String d0 = kplus.substring(28, 56);
+            System.out.println("D0 =" + d0);
+
+            ArrayList<String> C = new ArrayList<>();
+            ArrayList<String> D = new ArrayList<>();
+            C.add(c0);
+            D.add(d0);
+
+            for (int i = 1; i < 17; i++) {
+                C.add(left_Shift(C.get(C.size() - 1), i));
+                D.add(left_Shift(D.get(D.size() - 1), i));
+                System.out.println(String.format("C%s = %s", i, C.get(C.size() - 1)));
+                System.out.println(String.format("D%s = %s", i, D.get(D.size() - 1)));
+            }
+
+            ArrayList<String> K = new ArrayList<>();
+            int[] PC2 = {
+                    14, 17, 11, 24, 1, 5,
+                    3, 28, 15, 6, 21, 10,
+                    23, 19, 12, 4, 26, 8,
+                    16, 7, 27, 20, 13, 2,
+                    41, 52, 31, 37, 47, 55,
+                    30, 40, 51, 45, 33, 48,
+                    44, 49, 39, 56, 34, 53,
+                    46, 42, 50, 36, 29, 32
+            };
+
+            for (int i = 1; i < C.size(); i++) {
+                String kT = C.get(i) + D.get(i);
+                String kR = "";
+                for (int num : PC2) {
+                    kR = kR + kT.charAt(num - 1);
+                }
+                System.out.println(String.format("K%s = %s", i, kR));
+                K.add(kR);
+            }
+
+            //Pas 2 - DESENCRIPTACIÓN
+            String bitIP = "";
+            int[] IP = {
+                    58, 50, 42, 34, 26, 18, 10, 2,
+                    60, 52, 44, 36, 28, 20, 12, 4,
+                    62, 54, 46, 38, 30, 22, 14, 6,
+                    64, 56, 48, 40, 32, 24, 16, 8,
+                    57, 49, 41, 33, 25, 17, 9, 1,
+                    59, 51, 43, 35, 27, 19, 11, 3,
+                    61, 53, 45, 37, 29, 21, 13, 5,
+                    63, 55, 47, 39, 31, 23, 15, 7
+            };
+
+            for (int num : IP) {
+                bitIP = bitIP + bit.charAt(num - 1);
+            }
+
+            String L0 = bitIP.substring(0, 32);
+            String R0 = bitIP.substring(32, 64);
+
+            ArrayList<String> L = new ArrayList<>();
+            ArrayList<String> R = new ArrayList<>();
+            L.add(L0);
+            R.add(R0);
+
+            // IMPORTANTE: Usar las claves en orden inverso para desencriptar
+            for (int i = 0; i < 16; i++) {
+                String rA = R.get(R.size() - 1);
+                String lA = L.get(L.size() - 1);
+                System.out.println(String.format("R%s = %s", i, rA));
+                System.out.println(String.format("L%s = %s", i, lA));
+
+                int[] E = {
+                        32, 1, 2, 3, 4, 5,
+                        4, 5, 6, 7, 8, 9,
+                        8, 9, 10, 11, 12, 13,
+                        12, 13, 14, 15, 16, 17,
+                        16, 17, 18, 19, 20, 21,
+                        20, 21, 22, 23, 24, 25,
+                        24, 25, 26, 27, 28, 29,
+                        28, 29, 30, 31, 32, 1
+                };
+
+                String eR = "";
+                for (int num : E) {
+                    eR = eR + rA.charAt(num - 1);
+                }
+                System.out.println(String.format("E%s = %s", i, eR));
+
+                // Usar las claves en orden inverso (K15, K14, ..., K1)
+                String keR = XOR(eR, K.get(15 - i));
+                System.out.println(String.format("K%s+E(R%s) = %s", 16 - i, i, keR));
+
+                ArrayList<String> B = new ArrayList<>();
+                for (int j = 0; j < keR.length(); j += 6) {
+                    String grups = keR.substring(j, j + 6);
+                    B.add(grups);
+                    System.out.println(String.format("B%s = %s", B.size(), grups));
+                }
+
+                String Bs = sBox(B);
+
+                int[] P = {
+                        16, 7, 20, 21,
+                        29, 12, 28, 17,
+                        1, 15, 23, 26,
+                        5, 18, 31, 10,
+                        2, 8, 24, 14,
+                        32, 27, 3, 9,
+                        19, 13, 30, 6,
+                        22, 11, 4, 25
+                };
+
+                String f = "";
+                for (int num : P) {
+                    f = f + Bs.charAt(num - 1);
+                }
+                System.out.println("f =" + f);
+
+                String keL = XOR(lA, f);
+                R.add(keL);
+                System.out.println(String.format("R%s = %s", i + 1, keL));
+                L.add(rA);
+                System.out.println(String.format("L%s = %s", i + 1, rA));
+            }
+
+            String IPfinal = R.get(R.size() - 1) + L.get(L.size() - 1);
+            System.out.println("RL16= " + IPfinal);
+
+            int[] IP1 = {
+                    40, 8, 48, 16, 56, 24, 64, 32,
+                    39, 7, 47, 15, 55, 23, 63, 31,
+                    38, 6, 46, 14, 54, 22, 62, 30,
+                    37, 5, 45, 13, 53, 21, 61, 29,
+                    36, 4, 44, 12, 52, 20, 60, 28,
+                    35, 3, 43, 11, 51, 19, 59, 27,
+                    34, 2, 42, 10, 50, 18, 58, 26,
+                    33, 1, 41, 9, 49, 17, 57, 25
+            };
+
+            String textFin = "";
+            for (int num : IP1) {
+                textFin = textFin + IPfinal.charAt(num - 1);
+            }
+            System.out.println("Resultat del chunk desencriptat: " + textFin);
+            chunksResultants.add(textFin);
+        }
+
+        // Convertir el resultado binario a texto
+        String binariComplert = combinarCHunks(chunksResultants);
+        String textDesencriptat = binariText(binariComplert);
+        System.out.println("Text desencriptat: " + textDesencriptat);
+
+        // Guardar el texto desencriptado
+        String rutaDesenc = "C:\\Users\\zilax\\Documents\\GitHub\\Algoritme_DES\\src\\resources\\desencripta.txt";
+        try (FileWriter escArxiu = new FileWriter(rutaDesenc)) {
+            escArxiu.write(textDesencriptat);
+            System.out.println("Text desxifrat guardat");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Función auxiliar para convertir binario a texto
+    public static String binariText(String binari) {
+        String text = "";
+        // Eliminar ceros iniciales del padding
+        binari = binari.replaceFirst("^0+(?!$)", "");
+
+        // Asegurar que la longitud sea múltiplo de 8
+        while (binari.length() % 8 != 0) {
+            binari = "0" + binari;
+        }
+
+        for (int i = 0; i < binari.length(); i += 8) {
+            String byteBinari = binari.substring(i, i + 8);
+            int valorAscii = Integer.parseInt(byteBinari, 2);
+            if (valorAscii != 0) { // Ignorar bytes nulos del padding
+                text += (char) valorAscii;
+            }
+        }
+        return text;
+    }
 
         public static String left_Shift(String chunk, int pos) {
             String clau = "";
