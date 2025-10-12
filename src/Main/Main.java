@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -206,10 +208,18 @@ public class Main {
             chunksResultants.add(textFin);
 
         }
-        System.out.println("Rusltat final: "+ combinarCHunks(chunksResultants));
+        System.out.println("Resultat final: "+ combinarCHunks(chunksResultants));
+
+
+        String ruta="C:\\Users\\zilax\\Documents\\GitHub\\Algoritme_DES\\src\\resources\\encripta.txt";
+        try (FileWriter escArxiu= new FileWriter(ruta)){
+            escArxiu.write(combinarCHunks(chunksResultants));
+            System.out.println("Text xifrat guardat");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
-
 
 
 
