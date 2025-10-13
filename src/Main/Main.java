@@ -19,9 +19,9 @@ public class Main {
         String text = scan.nextLine();
         binari1 = omplirText(textBinari(text));
         System.out.println(binari1);
-        int nChunksText = (int) (Math.ceil((double) binari1.length() / 64));
+        int nChunksText = (int) (Math.ceil((double) binari1.length() / 64)); //Arrodonir cap al més gran
         int ultimaP = 0;
-        for (int i = 0; i < nChunksText; i++) {
+        for (int i = 0; i < nChunksText; i++) { //Chunks de text
             if (i == nChunksText - 1) {
                 System.out.println(String.format("Chunck n%s = %s", i + 1, omplirText(binari1.substring(ultimaP, binari1.length()))));
                 chunksText.add(omplirText(binari1.substring(ultimaP, binari1.length())));
@@ -63,7 +63,7 @@ public class Main {
 
             String kplus = "";
 
-            for (int num : PC1) {
+            for (int num : PC1) {//permutar
                 kplus = kplus + k.charAt(num - 1);
             }
             System.out.println("Clau permutada: " + kplus);
@@ -78,7 +78,7 @@ public class Main {
             C.add(c0);
             D.add(d0);
 
-            for (int i = 1; i < 17; i++) {
+            for (int i = 1; i < 17; i++) {//Fer left shift
                 C.add(left_Shift(C.get(C.size() - 1), i));
                 D.add(left_Shift(D.get(D.size() - 1), i));
                 System.out.println(String.format("C%s = %s", i, C.get(C.size() - 1)));
@@ -264,7 +264,7 @@ public class Main {
             }
         }
 
-        //CLAU - Generar las mismas subclaves
+
         for (String chunk : chunksText) {
             String bit = chunk; //a desencriptar
             String k = binari2;//clau
@@ -325,7 +325,7 @@ public class Main {
                 K.add(kR);
             }
 
-            //Pas 2 - DESENCRIPTACIÓN
+
             String bitIP = "";
             int[] IP = {
                     58, 50, 42, 34, 26, 18, 10, 2,
@@ -350,7 +350,7 @@ public class Main {
             L.add(L0);
             R.add(R0);
 
-            // IMPORTANTE: Usar las claves en orden inverso para desencriptar
+
             for (int i = 0; i < 16; i++) {
                 String rA = R.get(R.size() - 1);
                 String lA = L.get(L.size() - 1);
@@ -374,7 +374,7 @@ public class Main {
                 }
                 System.out.println(String.format("E%s = %s", i, eR));
 
-                // Usar las claves en orden inverso (K15, K14, ..., K1)
+
                 String keR = XOR(eR, K.get(15 - i));
                 System.out.println(String.format("K%s+E(R%s) = %s", 16 - i, i, keR));
 
@@ -433,14 +433,14 @@ public class Main {
             chunksResultants.add(textFin);
         }
 
-        // Convertir el resultado binario a texto
+
         String binariComplert = combinarCHunks(chunksResultants);
         String textDesencriptat = binariText(binariComplert);
         System.out.println("Text desencriptat: " + textDesencriptat);
 
-        // Guardar el texto desencriptado
+        //Guardar
         String rutaDesenc = "src/resources/desencripta.txt";
-        try (FileWriter escArxiu = new FileWriter(rutaDesenc)) {
+        try (FileWriter escArxiu = new FileWriter(rutaDesenc)) {//Escriu a l'arxiu
             escArxiu.write(textDesencriptat);
             System.out.println("Text desxifrat guardat");
         } catch (Exception e) {
@@ -449,7 +449,7 @@ public class Main {
     }
 
 
-    public static String binariText(String binari) {
+    public static String binariText(String binari) {//Desencriptar i que no surtin simbols raros
         String text = "";
         for(int i=0; i< binari.length();i+=8){
             int charCode = Integer.parseInt(binari.substring(i,i+8),2);
@@ -460,12 +460,12 @@ public class Main {
         return text;
     }
 
-        public static String left_Shift(String chunk, int pos) {
+        public static String left_Shift(String chunk, int pos) {//Left shift de 1 i de 2
             String clau = "";
-            Integer[] shifts2 = {3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15};
-            ArrayList<Integer> shift = new ArrayList<>(Arrays.asList(shifts2));
+            Integer[] shifts2 = {3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15};//Les voltes
+            ArrayList<Integer> shift = new ArrayList<>(Arrays.asList(shifts2));//Array List guardant les rondes
             for (int i = 0; i < chunk.length(); i++) {
-                if (shift.contains(pos)) {
+                if (shift.contains(pos)) {//Si conte les rondes qeu faci un shidt de dos
                     if (i == chunk.length() - 1) {
                         clau = clau + chunk.charAt(1);
                     } else if (i == chunk.length() - 2) {
@@ -484,7 +484,7 @@ public class Main {
             return clau;
         }
 
-        public static String XOR(String chunk, String clau) {
+        public static String XOR(String chunk, String clau) {//Porta logica XOR
             String xor = "";
 
             for (int i = 0; i < chunk.length(); i++) {
@@ -498,12 +498,12 @@ public class Main {
             return xor;
         }
 
-        public static int binariDecimal(String bin) {
+        public static int binariDecimal(String bin) {//de binari a decimal
             int dec = Integer.parseInt(bin, 2);
             return dec;
         }
 
-        public static String sBox(ArrayList<String> B) {
+        public static String sBox(ArrayList<String> B) {//Sbox
             String resultat = "";
             int[][] S1 = {
                     {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
@@ -582,7 +582,7 @@ public class Main {
             return resultat;
         }
 
-        public static String decimalBinari(String dec) {
+        public static String decimalBinari(String dec) {//Funcio de decimal a binari
             String binari = Integer.toBinaryString(Integer.parseInt(dec));
             if (binari.length() < 4) {
                 while (binari.length() < 4) {
@@ -592,7 +592,7 @@ public class Main {
             return binari;
         }
 
-        public static String textBinari(String text) {
+        public static String textBinari(String text) { //Funció de text a binari
             String binari = "";
             for (char c : text.toCharArray()) {
                 binari += String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0');
@@ -600,7 +600,7 @@ public class Main {
             return binari.trim(); //
         }
 
-        public static String omplirText(String text) {
+        public static String omplirText(String text) {//plenar bits amb 0
             while (text.length() < 64) {
                 text = "0" + text;
             }
